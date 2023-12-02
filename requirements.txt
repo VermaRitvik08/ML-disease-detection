@@ -2,6 +2,7 @@ numpy
 streamlit
 streamlit-option-menu
 opencv-python-headless
+matplotlib
 keras==2.15.0
 tensorflow-cpu==2.15.0
 protobuf!=4.21.0
