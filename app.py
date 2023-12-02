@@ -2,8 +2,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 import streamlit as st
-from PIL import Image
-from ml_model import load_and_predict
+import proj
 
 st.title("OcuLens Project")
 
@@ -18,11 +17,13 @@ if uploaded_file is not None:
     with open("temp.jpg", "wb") as f:
         f.write(uploaded_file.read())
 
-    # Make predictions using the loaded model
-    predicted_class = load_and_predict("temp.jpg")
 
-    # Display the prediction result
-    st.write(f"Predicted Class: {predicted_class}")
+    # replace the image_dir in proj with the path to the uploaded image
+    proj.image_dir = "temp.jpg"
+
+    # display the prediction
+    st.image(proj.image_dir, caption="Uploaded Image.", use_column_width=True)
+    
     
     
 # # Diabetes Prediction Page
