@@ -1,8 +1,263 @@
+
+# %%
+import numpy as np
+import pandas as pd
+import os
+import cv2
+import random
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+from keras import preprocessing\
 # -*- coding: utf-8 -*-
 import streamlit as st
 from streamlit_option_menu import option_menu
 import streamlit as st
-import proj
+
+
+# %%
+data = pd.read_csv("full_df.csv")
+
+# %%
+def has_condn(d,text):
+    if d in text: 
+        return True
+    else:
+        return False
+    
+def process_dataset(data):
+    #create 2 more columns labelling them whether right or left cataract
+    data["left_cataract"] = data["Left-Diagnostic Keywords"].apply(lambda x: has_condn("cataract",x))
+    data["right_cataract"] = data["Right-Diagnostic Keywords"].apply(lambda x: has_condn("cataract",x))
+  
+    data["LD"] = data["Left-Diagnostic Keywords"].apply(lambda x: has_condn("non proliferative retinopathy",x))
+    data["RD"] = data["Right-Diagnostic Keywords"].apply(lambda x: has_condn("non proliferative retinopathy",x))
+
+    data["LG"] = data["Left-Diagnostic Keywords"].apply(lambda x: has_condn("glaucoma",x))
+    data["RG"] = data["Right-Diagnostic Keywords"].apply(lambda x: has_condn("glaucoma",x))
+    
+    data["LH"] = data["Left-Diagnostic Keywords"].apply(lambda x: has_condn("hypertensive",x))
+    data["RH"] = data["Right-Diagnostic Keywords"].apply(lambda x: has_condn("hypertensive",x))
+
+    data["LM"] = data["Left-Diagnostic Keywords"].apply(lambda x: has_condn("myopia",x))
+    data["RM"] = data["Right-Diagnostic Keywords"].apply(lambda x: has_condn("myopia",x))
+    
+    data["LA"] = data["Left-Diagnostic Keywords"].apply(lambda x: has_condn("macular degeneration",x))
+    data["RA"] = data["Right-Diagnostic Keywords"].apply(lambda x: has_condn("macular degeneration",x))
+    
+    data["LO"] = data["Left-Diagnostic Keywords"].apply(lambda x: has_condn("drusen",x))
+    data["RO"] = data["Right-Diagnostic Keywords"].apply(lambda x: has_condn("drusen",x))
+    
+    #store the right/left cataract images ids in a array
+    left_cataract_images = data.loc[(data.C == True) & (data.left_cataract == True)]["Left-Fundus"].values
+    right_cataract_images = data.loc[(data.C == True) & (data.right_cataract == True)]["Right-Fundus"].values
+  
+    #store the left/right normal image ids in a array
+    left_normal = data.loc[(data.C == False) & (data["Left-Diagnostic Keywords"] == "normal fundus")]['Left-Fundus'].sample(350,random_state=42).values
+    right_normal = data.loc[(data.C == False) & (data["Right-Diagnostic Keywords"] == "normal fundus")]['Right-Fundus'].sample(350,random_state=42).values
+    
+    #store the left/right diabetes image ids
+    left_diab = data.loc[(data.C == False) & (data.LD == True)]["Left-Fundus"].values
+    right_diab = data.loc[(data.C == False) & (data.RD == True)]["Right-Fundus"].values 
+
+    #store the left/right glaucoma image ids
+    left_glaucoma = data.loc[(data.C == False) & (data.LG == True)]["Left-Fundus"].values
+    right_glaucoma = data.loc[(data.C == False) & (data.RG == True)]["Right-Fundus"].values 
+    
+    #store the left/right diabetes image ids
+    left_hyper = data.loc[(data.C == False) & (data.LH == True)]["Left-Fundus"].values
+    right_hyper = data.loc[(data.C == False) & (data.RH == True)]["Right-Fundus"].values 
+    
+    #store the left/right diabetes image ids
+    left_myopia = data.loc[(data.C == False) & (data.LM == True)]["Left-Fundus"].values
+    right_myopia = data.loc[(data.C == False) & (data.RM == True)]["Right-Fundus"].values 
+    
+    #store the left/right diabetes image ids
+    left_age = data.loc[(data.C == False) & (data.LA == True)]["Left-Fundus"].values
+    right_age = data.loc[(data.C == False) & (data.RA == True)]["Right-Fundus"].values 
+    
+    #store the left/right diabetes image ids
+    left_other = data.loc[(data.C == False) & (data.LO == True)]["Left-Fundus"].values
+    right_other = data.loc[(data.C == False) & (data.RO == True)]["Right-Fundus"].values 
+    
+    normalones = np.concatenate((left_normal,right_normal),axis = 0);
+    cataractones = np.concatenate((left_cataract_images,right_cataract_images),axis = 0);
+    diabones = np.concatenate((left_diab,right_diab),axis = 0);
+    glaucoma = np.concatenate((left_glaucoma,right_glaucoma),axis = 0);
+    hyper = np.concatenate((left_hyper,right_hyper),axis = 0);
+    myopia = np.concatenate((left_myopia,right_myopia),axis = 0);
+    age = np.concatenate((left_age,right_age),axis=0);
+    other = np.concatenate((left_other,right_other),axis = 0);
+    
+    return normalones,cataractones,diabones,glaucoma,hyper,myopia,age,other;
+
+# %%
+normal , cataract , diab, glaucoma , hyper , myopia , age, other = process_dataset(data);
+
+print("Dataset stats::")
+print("Normal ::" , len(normal))
+print("Cataract ::" , len(cataract))
+print("Diabetes ::" , len(diab))
+print("Glaucoma ::" , len(glaucoma))
+print("Hypertension ::" , len(hyper))
+print("Myopia ::" , len(myopia))
+print("Age Issues ::" , len(age))
+print("Other ::" , len(other))
+
+# %%
+from tqdm import tqdm
+
+image_dir = "archivefull/preprocessed_images"
+# image_dir="/kaggle/input/ocular-disease-recognition-odir5k/preprocessed_images"
+image_size=224
+labels = []
+dataset = []
+def d_gen(imagecategory , label):
+    for img in tqdm(imagecategory):
+        imgpath = os.path.join(image_dir,img);
+        #now we try to read the image and resize it accordingly
+        # print(imgpath)
+        try:
+            image = cv2.imread(imgpath,cv2.IMREAD_COLOR)
+            image = cv2.resize(image,(image_size,image_size))
+        except:
+            continue;
+        dataset.append([np.array(image),np.array(label)]);
+    random.shuffle(dataset);
+    
+    return dataset;
+
+
+dataset = d_gen(normal,0)
+dataset = d_gen(cataract,1)
+dataset = d_gen(diab,2)
+dataset = d_gen(glaucoma,3)
+dataset = d_gen(hyper,4)
+dataset = d_gen(myopia,5)
+dataset = d_gen(age,6)
+dataset = d_gen(other,7)
+
+len(dataset)
+
+# %%
+plt.figure(figsize=(12,7))
+for i in range(10):
+    sample = random.choice(range(len(dataset)))
+    image = dataset[sample][0]
+    category = dataset[sample][1]
+    
+    if category== 0:
+        label = "Normal"
+    elif category == 1 :
+        label = "Cataract"
+    elif category == 2:
+        label = "Diabetes"
+    elif category == 3:
+        label = "Glaucoma"
+    elif category == 4:
+        label = "Hypertension"
+    elif category == 5:
+        label = "Myopia"
+    elif category == 6:
+        label = "Age Issues"
+    else:
+        label = "Other"
+           
+    plt.subplot(2,6,i+1)
+    plt.imshow(image)
+    plt.xlabel(label)
+plt.tight_layout()    
+
+# %%
+train_x = np.array([i[0] for i in dataset]).reshape(-1,image_size,image_size,3);
+train_y = np.array([i[1] for i in dataset])
+
+from sklearn import model_selection
+from tensorflow import keras
+#splitting the dataset
+x_train , x_test , y_train, y_test = model_selection.train_test_split(train_x,train_y, test_size=0.2)
+
+y_train_cat = keras.utils.to_categorical(y_train,num_classes=8)
+
+y_test_cat = keras.utils.to_categorical(y_test,num_classes = 8)
+
+# %%
+from keras.applications.vgg19 import VGG19
+import ssl
+import tensorflow as tf
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+vgg = VGG19(weights="imagenet",include_top = False,input_shape=(image_size,image_size,3))
+
+for layer in vgg.layers:
+    layer.trainable = False
+
+
+model = keras.Sequential()
+model.add(vgg)
+model.add(keras.layers.Flatten())
+model.add(keras.layers.Dense(256,activation = "relu"))
+model.add(tf.keras.layers.BatchNormalization())
+model.add(keras.layers.Dense(256,activation = "relu"))
+model.add(tf.keras.layers.BatchNormalization())
+model.add(keras.layers.Dense(8,activation="softmax"))
+
+model.summary()
+
+# %%
+model.compile(optimizer="adam",loss="categorical_crossentropy",metrics=["accuracy"])
+#u might have to apply train_generator and test_generator
+history = model.fit(x_train,y_train_cat,batch_size=32,epochs=5)
+print(history)
+
+# %%
+
+from sklearn.metrics import confusion_matrix,classification_report,accuracy_score
+# y_pred = np.array((model.predict(x_test) > 0.5).astype("int32"))
+y_pred = []
+for i in model.predict(x_test):
+    y_pred.append(np.argmax(np.array(i)).astype("int32"))
+
+for i in range(20):
+    sample = random.choice(range(len(x_test)))
+    image = x_test[sample]
+    category = y_test[sample]
+    pred_category = y_pred[sample]
+    
+    if category== 0:
+        label = "Normal"
+    elif category == 1 :
+        label = "Cataract"
+    elif category == 2:
+        label = "Diabetes"
+    elif category == 3:
+        label = "Glaucoma"
+    elif category == 4:
+        label = "Hypertension"
+    elif category == 5:
+        label = "Myopia"
+    elif category == 6:
+        label = "Age Issues"
+    else:
+        label = "Other"
+        
+    if pred_category== 0:
+        pred_label = "Normal"
+    elif pred_category == 1 :
+        pred_label = "Cataract"
+    elif pred_category == 2:
+        pred_label = "Diabetes"
+    elif pred_category == 3:
+        pred_label = "Glaucoma"
+    elif pred_category == 4:
+        pred_label = "Hypertension"
+    elif pred_category == 5:
+        pred_label = "Myopia"
+    elif pred_category == 6:
+        pred_label = "Age Issues"
+    else:
+        pred_label = "Other"
+        
 
 st.title("OcuLens Project")
 
@@ -19,235 +274,18 @@ if uploaded_file is not None:
 
 
     # replace the image_dir in proj with the path to the uploaded image
-    proj.image_dir = "temp.jpg"
+    new_image_path = "temp.jpg"
 
-    # display the prediction
-    st.image(proj.image_dir, caption="Uploaded Image.", use_column_width=True)
-    
-    
-    
-# # Diabetes Prediction Page
-# if (selected == 'Diabetes Prediction'):
-    
-#     # page title
-#     st.title('Diabetes Prediction using ML')
-    
-    
-#     # getting the input data from the user
-#     col1, col2, col3 = st.columns(3)
-    
-#     with col1:
-#         Pregnancies = st.text_input('Number of Pregnancies')
-        
-#     with col2:
-#         Glucose = st.text_input('Glucose Level')
-    
-#     with col3:
-#         BloodPressure = st.text_input('Blood Pressure value')
-    
-#     with col1:
-#         SkinThickness = st.text_input('Skin Thickness value')
-    
-#     with col2:
-#         Insulin = st.text_input('Insulin Level')
-    
-#     with col3:
-#         BMI = st.text_input('BMI value')
-    
-#     with col1:
-#         DiabetesPedigreeFunction = st.text_input('Diabetes Pedigree Function value')
-    
-#     with col2:
-#         Age = st.text_input('Age of the Person')
-    
-    
-#     # code for Prediction
-#     diab_diagnosis = ''
-    
-#     # creating a button for Prediction
-    
-#     if st.button('Diabetes Test Result'):
-#         diab_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
-        
-#         if (diab_prediction[0] == 1):
-#           diab_diagnosis = 'The person is diabetic'
-#         else:
-#           diab_diagnosis = 'The person is not diabetic'
-        
-#     st.success(diab_diagnosis)
+new_image = cv2.imread(new_image_path)
+new_image = cv2.resize(new_image, (224, 224)) 
+new_image = new_image / 255.0  
 
+# Perform inference
+predictions = model.predict(np.expand_dims(new_image, axis=0))
 
+# Get the class with the highest probability
+predicted_class = np.argmax(predictions)
 
-
-# # Heart Disease Prediction Page
-# if (selected == 'Heart Disease Prediction'):
-    
-#     # page title
-#     st.title('Heart Disease Prediction using ML')
-    
-#     col1, col2, col3 = st.columns(3)
-    
-#     with col1:
-#         age = st.text_input('Age')
-        
-#     with col2:
-#         sex = st.text_input('Sex')
-        
-#     with col3:
-#         cp = st.text_input('Chest Pain types')
-        
-#     with col1:
-#         trestbps = st.text_input('Resting Blood Pressure')
-        
-#     with col2:
-#         chol = st.text_input('Serum Cholestoral in mg/dl')
-        
-#     with col3:
-#         fbs = st.text_input('Fasting Blood Sugar > 120 mg/dl')
-        
-#     with col1:
-#         restecg = st.text_input('Resting Electrocardiographic results')
-        
-#     with col2:
-#         thalach = st.text_input('Maximum Heart Rate achieved')
-        
-#     with col3:
-#         exang = st.text_input('Exercise Induced Angina')
-        
-#     with col1:
-#         oldpeak = st.text_input('ST depression induced by exercise')
-        
-#     with col2:
-#         slope = st.text_input('Slope of the peak exercise ST segment')
-        
-#     with col3:
-#         ca = st.text_input('Major vessels colored by flourosopy')
-        
-#     with col1:
-#         thal = st.text_input('thal: 0 = normal; 1 = fixed defect; 2 = reversable defect')
-        
-        
-     
-     
-#     # code for Prediction
-#     heart_diagnosis = ''
-    
-#     # creating a button for Prediction
-    
-#     if st.button('Heart Disease Test Result'):
-#         heart_prediction = heart_disease_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,thalach,exang,oldpeak,slope,ca,thal]])                          
-        
-#         if (heart_prediction[0] == 1):
-#           heart_diagnosis = 'The person is having heart disease'
-#         else:
-#           heart_diagnosis = 'The person does not have any heart disease'
-        
-#     st.success(heart_diagnosis)
-        
-    
-    
-
-# # Parkinson's Prediction Page
-# if (selected == "Parkinsons Prediction"):
-    
-#     # page title
-#     st.title("Parkinson's Disease Prediction using ML")
-    
-#     col1, col2, col3, col4, col5 = st.columns(5)  
-    
-#     with col1:
-#         fo = st.text_input('MDVP:Fo(Hz)')
-        
-#     with col2:
-#         fhi = st.text_input('MDVP:Fhi(Hz)')
-        
-#     with col3:
-#         flo = st.text_input('MDVP:Flo(Hz)')
-        
-#     with col4:
-#         Jitter_percent = st.text_input('MDVP:Jitter(%)')
-        
-#     with col5:
-#         Jitter_Abs = st.text_input('MDVP:Jitter(Abs)')
-        
-#     with col1:
-#         RAP = st.text_input('MDVP:RAP')
-        
-#     with col2:
-#         PPQ = st.text_input('MDVP:PPQ')
-        
-#     with col3:
-#         DDP = st.text_input('Jitter:DDP')
-        
-#     with col4:
-#         Shimmer = st.text_input('MDVP:Shimmer')
-        
-#     with col5:
-#         Shimmer_dB = st.text_input('MDVP:Shimmer(dB)')
-        
-#     with col1:
-#         APQ3 = st.text_input('Shimmer:APQ3')
-        
-#     with col2:
-#         APQ5 = st.text_input('Shimmer:APQ5')
-        
-#     with col3:
-#         APQ = st.text_input('MDVP:APQ')
-        
-#     with col4:
-#         DDA = st.text_input('Shimmer:DDA')
-        
-#     with col5:
-#         NHR = st.text_input('NHR')
-        
-#     with col1:
-#         HNR = st.text_input('HNR')
-        
-#     with col2:
-#         RPDE = st.text_input('RPDE')
-        
-#     with col3:
-#         DFA = st.text_input('DFA')
-        
-#     with col4:
-#         spread1 = st.text_input('spread1')
-        
-#     with col5:
-#         spread2 = st.text_input('spread2')
-        
-#     with col1:
-#         D2 = st.text_input('D2')
-        
-#     with col2:
-#         PPE = st.text_input('PPE')
-        
-    
-    
-#     # code for Prediction
-#     parkinsons_diagnosis = ''
-    
-#     # creating a button for Prediction    
-#     if st.button("Parkinson's Test Result"):
-#         parkinsons_prediction = parkinsons_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ,DDP,Shimmer,Shimmer_dB,APQ3,APQ5,APQ,DDA,NHR,HNR,RPDE,DFA,spread1,spread2,D2,PPE]])                          
-        
-#         if (parkinsons_prediction[0] == 1):
-#           parkinsons_diagnosis = "The person has Parkinson's disease"
-#         else:
-#           parkinsons_diagnosis = "The person does not have Parkinson's disease"
-        
-#     st.success(parkinsons_diagnosis)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Now 'predicted_class' contains the predicted class label for the new image
+st.write(f"Actual: {label}")
+st.write(f"Predicted class: {pred_label}")
