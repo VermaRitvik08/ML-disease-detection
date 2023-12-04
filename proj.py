@@ -27,7 +27,6 @@ import os
 import cv2
 import random
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 from keras import preprocessing
 
 # %% [markdown]
@@ -173,8 +172,6 @@ len(dataset)
 print(len(dataset))
 
 
-# %%
-plt.figure(figsize=(12,7))
 for i in range(10):
     sample = random.choice(range(len(dataset)))
     image = dataset[sample][0]
@@ -196,11 +193,7 @@ for i in range(10):
         label = "Age Issues"
     else:
         label = "Other"
-           
-    plt.subplot(2,6,i+1)
-    plt.imshow(image)
-    plt.xlabel(label)
-plt.tight_layout()    
+  
 
 # %%
 #Divide the dataset into 2 predictors and target...
@@ -272,8 +265,7 @@ print(y_pred)
 # %%
 print(accuracy_score(y_test,y_pred))
 
-# %%
-plt.figure(figsize=(12,7))
+
 for i in range(20):
     sample = random.choice(range(len(x_test)))
     image = x_test[sample]
@@ -314,11 +306,6 @@ for i in range(20):
     else:
         pred_label = "Other"
         
-    plt.subplot(4,5,i+1)
-    plt.imshow(image)
-    plt.xlabel("Actual:{}\nPrediction:{}".format(label,pred_label))
-plt.tight_layout() 
-
 
 # %%
 
