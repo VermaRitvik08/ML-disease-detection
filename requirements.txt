@@ -4,6 +4,7 @@ streamlit-option-menu
 opencv-python-headless
 matplotlib
 keras==2.14.0
+scikit-learn
 tensorflow-cpu==2.14.0
 tqdm
 protobuf!=4.21.0
