@@ -128,7 +128,7 @@ print("Other ::" , len(other))
 
 
 # %%
-dataset_dir = "/Users/khushjajoo/Desktop/ECE 545/archivefull/preprocessed_images"
+dataset_dir = "/kaggle/input/ocular-disease-recognition-odir5k/preprocessed_images"
 image_size=224
 labels = []
 dataset = []
