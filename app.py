@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 import streamlit as st
 from streamlit_option_menu import option_menu
 import streamlit as st
-import proj
+from proj import predicted_class
 
 
 
@@ -20,6 +19,6 @@ if uploaded_file is not None:
         f.write(uploaded_file.read())
 
 
-    prediction = proj.predicted_class("temp.jpg")
+    prediction = predicted_class("temp.jpg")
 
     st.write(f"Prediction: {prediction}")
