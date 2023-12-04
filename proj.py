@@ -34,7 +34,7 @@ from keras import preprocessing
 # **Reading the datasets from the directory**
 
 # %%
-data = pd.read_csv("/Users/khushjajoo/Desktop/ECE 545/archivefull/full_df.csv")
+data = pd.read_csv("full_df.csv")
 data.head(20)
 
 # %%
