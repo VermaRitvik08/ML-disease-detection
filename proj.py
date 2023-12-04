@@ -34,7 +34,7 @@ from keras import preprocessing
 # **Reading the datasets from the directory**
 
 # %%
-data = pd.read_csv("full_df.csv")
+data = pd.read_csv("/Users/khushjajoo/Desktop/ECE 545/archivefull/full_df.csv")
 data.head(20)
 
 # %%
@@ -128,7 +128,7 @@ print("Other ::" , len(other))
 
 
 # %%
-dataset_dir = "preprocessed_images"
+dataset_dir = "/Users/khushjajoo/Desktop/ECE 545/archivefull/preprocessed_images"
 image_size=224
 labels = []
 dataset = []
@@ -170,6 +170,7 @@ dataset = dataset_generator(age,6)
 dataset = dataset_generator(other,7)
 
 len(dataset)
+print(len(dataset))
 
 
 # %%
@@ -320,7 +321,7 @@ plt.tight_layout()
 
 
 # %%
-new_image_path = 'preprocessed_images/290_left.jpg' 
+
 def predicted_class(new_image_path):
     new_image = cv2.imread(new_image_path)
     new_image = cv2.resize(new_image, (224, 224)) 
