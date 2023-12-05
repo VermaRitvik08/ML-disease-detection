@@ -233,6 +233,7 @@ def predicted_class(new_image_path):
             pred_label = "Age Issues"
         else:
             pred_label = "Other"
+            
     new_image = cv2.imread(new_image_path)
     new_image = cv2.resize(new_image, (224, 224)) 
     new_image = new_image / 255.0  
