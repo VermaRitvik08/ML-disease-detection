@@ -266,50 +266,90 @@ print(y_pred)
 print(accuracy_score(y_test,y_pred))
 
 
-for i in range(20):
-    sample = random.choice(range(len(x_test)))
-    image = x_test[sample]
-    category = y_test[sample]
-    pred_category = y_pred[sample]
+# for i in range(20):
+#     sample = random.choice(range(len(x_test)))
+#     image = x_test[sample]
+#     category = y_test[sample]
+#     pred_category = y_pred[sample]
     
-    if category== 0:
-        label = "Normal"
-    elif category == 1 :
-        label = "Cataract"
-    elif category == 2:
-        label = "Diabetes"
-    elif category == 3:
-        label = "Glaucoma"
-    elif category == 4:
-        label = "Hypertension"
-    elif category == 5:
-        label = "Myopia"
-    elif category == 6:
-        label = "Age Issues"
-    else:
-        label = "Other"
+#     if category== 0:
+#         label = "Normal"
+#     elif category == 1 :
+#         label = "Cataract"
+#     elif category == 2:
+#         label = "Diabetes"
+#     elif category == 3:
+#         label = "Glaucoma"
+#     elif category == 4:
+#         label = "Hypertension"
+#     elif category == 5:
+#         label = "Myopia"
+#     elif category == 6:
+#         label = "Age Issues"
+#     else:
+#         label = "Other"
         
-    if pred_category== 0:
-        pred_label = "Normal"
-    elif pred_category == 1 :
-        pred_label = "Cataract"
-    elif pred_category == 2:
-        pred_label = "Diabetes"
-    elif pred_category == 3:
-        pred_label = "Glaucoma"
-    elif pred_category == 4:
-        pred_label = "Hypertension"
-    elif pred_category == 5:
-        pred_label = "Myopia"
-    elif pred_category == 6:
-        pred_label = "Age Issues"
-    else:
-        pred_label = "Other"
+#     if pred_category== 0:
+#         pred_label = "Normal"
+#     elif pred_category == 1 :
+#         pred_label = "Cataract"
+#     elif pred_category == 2:
+#         pred_label = "Diabetes"
+#     elif pred_category == 3:
+#         pred_label = "Glaucoma"
+#     elif pred_category == 4:
+#         pred_label = "Hypertension"
+#     elif pred_category == 5:
+#         pred_label = "Myopia"
+#     elif pred_category == 6:
+#         pred_label = "Age Issues"
+#     else:
+#         pred_label = "Other"
         
 
 # %%
 
 def predicted_class(new_image_path):
+    
+    for i in range(20):
+        sample = random.choice(range(len(x_test)))
+        image = x_test[sample]
+        category = y_test[sample]
+        pred_category = y_pred[sample]
+    
+        if category== 0:
+            label = "Normal"
+        elif category == 1 :
+            label = "Cataract"
+        elif category == 2:
+            label = "Diabetes"
+        elif category == 3:
+            label = "Glaucoma"
+        elif category == 4:
+            label = "Hypertension"
+        elif category == 5:
+            label = "Myopia"
+        elif category == 6:
+            label = "Age Issues"
+        else:
+            label = "Other"
+            
+        if pred_category== 0:
+            pred_label = "Normal"
+        elif pred_category == 1 :
+            pred_label = "Cataract"
+        elif pred_category == 2:
+            pred_label = "Diabetes"
+        elif pred_category == 3:
+            pred_label = "Glaucoma"
+        elif pred_category == 4:
+            pred_label = "Hypertension"
+        elif pred_category == 5:
+            pred_label = "Myopia"
+        elif pred_category == 6:
+            pred_label = "Age Issues"
+        else:
+            pred_label = "Other"
     new_image = cv2.imread(new_image_path)
     new_image = cv2.resize(new_image, (224, 224)) 
     new_image = new_image / 255.0  
@@ -319,9 +359,10 @@ def predicted_class(new_image_path):
 
     # Get the class with the highest probability
     predicted_class = np.argmax(predictions)
-
+    print(f"Actual: {label}")
+    print(f"Predicted class: {pred_label}")
     # Now 'predicted_class' contains the predicted class label for the new image
-    return predicted_class
+    return pred_label
 # new_image = cv2.imread(new_image_path)
 # new_image = cv2.resize(new_image, (224, 224)) 
 # new_image = new_image / 255.0  
@@ -333,7 +374,6 @@ def predicted_class(new_image_path):
 # predicted_class = np.argmax(predictions)
 
 # # Now 'predicted_class' contains the predicted class label for the new image
-print(f"Actual: {label}")
-print(f"Predicted class: {pred_label}")
+
 
 
