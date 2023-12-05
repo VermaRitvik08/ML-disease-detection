@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
 import streamlit as st
+from streamlit_option_menu import option_menu
 import streamlit as st
-from proj import predicted_class
+import proj
 
+# increase font size of title
+st.markdown("<h1 style='text-align: center; color: black;'>OcuLens Project</h1>", unsafe_allow_html=True)
 
+# change background colour of website to white
 
-st.title("OcuLens Project")
 
 # File Upload
 uploaded_file = st.file_uploader("Choose an image...", type="jpg")
@@ -18,6 +22,7 @@ if uploaded_file is not None:
         f.write(uploaded_file.read())
 
 
-    prediction = predicted_class("temp.jpg")
+    prediction = proj.predicted_class("temp.jpg")
 
+    st.write (f"Actual: {proj.label}")
     st.write(f"Prediction: {prediction}")
