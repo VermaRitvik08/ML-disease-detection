@@ -2,6 +2,8 @@ mkdir -p ~/.streamlit/
 echo "
 [general]\n\
 email = \"your-email@domain.com\"\n\
+" > ~/.streamlit/config.toml
+echo "
 [theme]
 primaryColor=’#020202’
 backgroundColor=’#c4c3c3’
