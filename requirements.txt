@@ -1,4 +1,6 @@
+numpy
+sci-kit-learn
 streamlit
-streamlit_option_menu
-pickle
+streamlit-option-menu
+pickle-mixin
 protobuf!=4.21.0
