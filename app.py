@@ -21,7 +21,7 @@ with st.sidebar:
                           ['Diabetes Prediction',
                            'Heart Disease Prediction',
                            'Parkinsons Prediction'],
-                          icons=['activity','heart','person'],
+                          icons=['activity','heart','brain'],
                           default_index=0)
     
     
@@ -29,7 +29,7 @@ with st.sidebar:
 if (selected == 'Diabetes Prediction'):
     
     # page title
-    st.title('Diabetes Prediction')
+    st.title('Diabetes Prediction System')
     
     
     # getting the input data from the user
@@ -82,7 +82,7 @@ if (selected == 'Diabetes Prediction'):
 if (selected == 'Heart Disease Prediction'):
     
     # page title
-    st.title('Heart Disease Prediction using ML')
+    st.title('Heart Disease Prediction System')
     
     col1, col2, col3 = st.columns(3)
     
@@ -150,7 +150,7 @@ if (selected == 'Heart Disease Prediction'):
 if (selected == "Parkinsons Prediction"):
     
     # page title
-    st.title("Parkinson's Disease Prediction using ML")
+    st.title("Parkinson's Disease Prediction System")
     
     col1, col2, col3 = st.columns(3)  
     
