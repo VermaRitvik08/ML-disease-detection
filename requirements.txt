@@ -1,2 +1,4 @@
 streamlit
+streamlit_option_menu
+pickle
 protobuf!=4.21.0
