@@ -16,7 +16,7 @@ with st.sidebar:
                            'Heart Disease Prediction',
                            'Parkinsons Prediction'],
                           icons=['activity','heart','person'],
-                          default_index=0 orientation="horizontal" ) 
+                          default_index=0, orientation="horizontal" ) 
     
 
 if (selected == 'Diabetes Prediction'):
