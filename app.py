@@ -29,7 +29,7 @@ with st.sidebar:
 if (selected == 'Diabetes Prediction'):
     
     # page title
-    st.title('Diabetes Prediction using ML')
+    st.title('Diabetes Prediction')
     
     
     # getting the input data from the user
@@ -65,7 +65,7 @@ if (selected == 'Diabetes Prediction'):
     
     # creating a button for Prediction
     
-    if st.button('Diabetes Test Result'):
+    if st.button('Diabetes Test Prediction'):
         diab_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]])
         
         if (diab_prediction[0] == 1):
@@ -133,7 +133,7 @@ if (selected == 'Heart Disease Prediction'):
     
     # creating a button for Prediction
     
-    if st.button('Heart Disease Test Result'):
+    if st.button('Heart Disease Test Prediction'):
         heart_prediction = heart_disease_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,thalach,exang,oldpeak,slope,ca,thal]])                          
         
         if (heart_prediction[0] == 1):
@@ -152,7 +152,7 @@ if (selected == "Parkinsons Prediction"):
     # page title
     st.title("Parkinson's Disease Prediction using ML")
     
-    col1, col2, col3, col4, col5 = st.columns(5)  
+    col1, col2, col3 = st.columns(5)  
     
     with col1:
         fo = st.text_input('MDVP:Fo(Hz)')
@@ -163,40 +163,40 @@ if (selected == "Parkinsons Prediction"):
     with col3:
         flo = st.text_input('MDVP:Flo(Hz)')
         
-    with col4:
+    with col1:
         Jitter_percent = st.text_input('MDVP:Jitter(%)')
         
-    with col5:
+    with col2:
         Jitter_Abs = st.text_input('MDVP:Jitter(Abs)')
         
-    with col1:
+    with col3:
         RAP = st.text_input('MDVP:RAP')
         
-    with col2:
+    with col1:
         PPQ = st.text_input('MDVP:PPQ')
         
-    with col3:
+    with col2:
         DDP = st.text_input('Jitter:DDP')
         
-    with col4:
+    with col3:
         Shimmer = st.text_input('MDVP:Shimmer')
         
-    with col5:
+    with col1:
         Shimmer_dB = st.text_input('MDVP:Shimmer(dB)')
         
-    with col1:
+    with col2:
         APQ3 = st.text_input('Shimmer:APQ3')
         
-    with col2:
+    with col3:
         APQ5 = st.text_input('Shimmer:APQ5')
         
-    with col3:
+    with col1:
         APQ = st.text_input('MDVP:APQ')
         
-    with col4:
+    with col2:
         DDA = st.text_input('Shimmer:DDA')
         
-    with col5:
+    with col3:
         NHR = st.text_input('NHR')
         
     with col1:
@@ -208,16 +208,16 @@ if (selected == "Parkinsons Prediction"):
     with col3:
         DFA = st.text_input('DFA')
         
-    with col4:
+    with col1:
         spread1 = st.text_input('spread1')
         
-    with col5:
+    with col2:
         spread2 = st.text_input('spread2')
         
-    with col1:
+    with col3:
         D2 = st.text_input('D2')
         
-    with col2:
+    with col1:
         PPE = st.text_input('PPE')
         
     
@@ -226,7 +226,7 @@ if (selected == "Parkinsons Prediction"):
     parkinsons_diagnosis = ''
     
     # creating a button for Prediction    
-    if st.button("Parkinson's Test Result"):
+    if st.button("Parkinson's Test Prediction"):
         parkinsons_prediction = parkinsons_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ,DDP,Shimmer,Shimmer_dB,APQ3,APQ5,APQ,DDA,NHR,HNR,RPDE,DFA,spread1,spread2,D2,PPE]])                          
         
         if (parkinsons_prediction[0] == 1):
@@ -235,3 +235,5 @@ if (selected == "Parkinsons Prediction"):
           parkinsons_diagnosis = "The person does not have Parkinson's disease"
         
     st.success(parkinsons_diagnosis)
+
+
