@@ -152,7 +152,7 @@ if (selected == "Parkinsons Prediction"):
     # page title
     st.title("Parkinson's Disease Prediction using ML")
     
-    col1, col2, col3 = st.columns(5)  
+    col1, col2, col3 = st.columns(3)  
     
     with col1:
         fo = st.text_input('MDVP:Fo(Hz)')
